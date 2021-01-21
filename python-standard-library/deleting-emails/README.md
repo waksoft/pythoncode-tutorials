@@ -1,6 +1,6 @@
-# [How to Delete Emails in Python](https://www.thepythoncode.com/article/deleting-emails-in-python)
-To run this:
-- Change `username` and `password` for real email credentials, edit the `imap.search()` line for your use case and run `delete_emails.py`:
+# [Как удалять электронные письма с Python](https://www.thepythoncode.com/article/deleting-emails-in-python)
+Для загрузки:
+- Измените `username` и `password`, указав дейтсвительный аккаунт, редактируйте строку `imap.search()` и загрузите скрипт `delete_emails.py`:
     ```
     python delete_emails.py
     ```
