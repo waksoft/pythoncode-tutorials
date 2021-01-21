@@ -2,48 +2,55 @@ import imaplib
 import email
 from email.header import decode_header
 
-# account credentials
+# Измените учетные данные
 username = "youremailaddress@provider.com"
 password = "yourpassword"
 
-# create an IMAP4 class with SSL 
+# создать класс IMAP4 с SSL
 imap = imaplib.IMAP4_SSL("imap.gmail.com")
-# authenticate
+
+# аутентификация
 imap.login(username, password)
-# select the mailbox I want to delete in
-# if you want SPAM, use imap.select("SPAM") instead
+
+# выберите почтовый ящик, в котором надо удалить письма
+# если вам нужен SPAM, используйте вместо него imap.select("SPAM")
 imap.select("INBOX")
-# search for specific mails by sender
+
+# поиск определенных писем по отправителю
 status, messages = imap.search(None, 'FROM "googlealerts-noreply@google.com"')
-# to get all mails
+
+# чтобы получить все письма:
 # status, messages = imap.search(None, "ALL")
-# to get mails by subject
-# status, messages = imap.search(None, 'SUBJECT "Thanks for Subscribing to our Newsletter !"')
-# to get mails after a specific date
-# status, messages = imap.search(None, 'SINCE "01-JAN-2020"')
-# to get mails before a specific date
-# status, messages = imap.search(None, 'BEFORE "01-JAN-2020"')
-# convert messages to a list of email IDs
+
+# для получения писем по теме
+# status, messages = imap.search(None, 'SUBJECT «Спасибо за подписку на нашу рассылку!»')
+
+# для получения писем после определенной даты
+# status, messages = imap.search(None, ''SINCE "01-JAN-2020"')
+
+# для получения писем до определенной даты
+# status, messages = imap.search (Нет, 'BEFORE "01-JAN-2020"')
+# преобразовать сообщения в список адресов электронной почты 
 messages = messages[0].split(b' ')
 for mail in messages:
     _, msg = imap.fetch(mail, "(RFC822)")
-    # you can delete the for loop for performance if you have a long list of emails
-    # because it is only for printing the SUBJECT of target email to delete
-    for response in msg:
+        # если у вас длинный список писем, то можно удалить цикл for для повышения производительности
+        # потому что он предназначен только для Subject цэлектронных писем для удаления
+        for response in msg:
         if isinstance(response, tuple):
             msg = email.message_from_bytes(response[1])
-            # decode the email subject
+            # декодирование темы email
             subject = decode_header(msg["Subject"])[0][0]
             if isinstance(subject, bytes):
-                # if it's a bytes type, decode to str
+                # если это байтовый тип, декодировать в str
                 subject = subject.decode()
             print("Deleting", subject)
-    # mark the mail as deleted
+    # отметить письмо как удаленное
     imap.store(mail, "+FLAGS", "\\Deleted")
-# permanently remove mails that are marked as deleted
-# from the selected mailbox (in this case, INBOX)
+# навсегда удалить письма, помеченные как удаленные
+# из выбранного почтового ящика (в нашем случае INBOX)
 imap.expunge()
-# close the mailbox
+# закрыть email
 imap.close()
-# logout from the account
+# выйти из аккаунта
 imap.logout()
